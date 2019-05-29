@@ -6,9 +6,13 @@ INC = -I/usr/include/Poco/Net/ \
 LIB = -L/usr/lib/
 LINK = -lPocoFoundation -lPocoNet -lPocoJSON
 SRC = main.cpp ClientHandler.cpp
+SRC2 = testconn.cpp
 
 main: 
 	$(CC) $(CFLAGS) $(INC) -o main $(SRC) $(DEPS) $(LIB) $(LINK)
 
+testconn: 
+	$(CC) $(CFLAGS) $(INC) -o testconn $(SRC2) $(DEPS) $(LIB) $(LINK)
+
 clean:
-	rm main main.o 
+	rm main main.o testconn
