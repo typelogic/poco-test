@@ -1,5 +1,7 @@
 CC = g++
+GCC = gcc
 CFLAGS = -Wall -Werror 
+INC2 = -Imultiplexing/
 INC = -I/usr/include/Poco/Net/ \
 	      -I/usr/include/Poco/Foundation/ \
 		  -I/usr/include/Poco/JSON/
@@ -14,5 +16,11 @@ main:
 testconn: 
 	$(CC) $(CFLAGS) $(INC) -o testconn $(SRC2) $(DEPS) $(LIB) $(LINK)
 
+client:
+	$(GCC) $(INC2) -o client multiplexing/client.c 
+
+server:
+	$(GCC) $(INC2) -o server multiplexing/server.c 
+
 clean:
-	rm main main.o testconn
+	rm main main.o testconn client server
