@@ -1,6 +1,7 @@
-//#include "Poco/File.h"
-//#include "Poco/Path.h"
+#include "Poco/Path.h"
 #include "Poco/TemporaryFile.h"
+//#include "Poco/File.h" // no longer necessary
+
 #include <iostream>
 #include <fstream>
 
@@ -8,8 +9,6 @@
 #include <chrono>
 
 std::string g;
-
-int addnum(int,int);
 
 void fileops()
 {
@@ -37,11 +36,33 @@ void ff()
     x.remove(true);
 }
 
+Poco::TemporaryFile tmp;
+std::string testTempFolder = tmp.tempName();
+
+//testTempFolder = tmp.tempName(); // cannotbe
+Poco::File x(testTempFolder);
+//x.createDirectories(); // cannotbe
+
+void TearDown() 
+{
+	Poco::File x(testTempFolder);
+	x.remove(true);
+}
+
 int main(int argc, char** argv) 
 {
     //fileops();
 
-    //std::cout << Poco::Path::temp();
+#if 0	
+	std::cout << "[" << testTempFolder << "]\n";
+	x.createDirectories();
+	std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+	std::cout << "deleting foler " << testTempFolder << "\n";
+	TearDown();
+#endif
+
+    std::cout << Poco::Path::temp() << std::endl;
+
 #if 0
     Poco::Path tmpPath(Poco::Path::temp());
     tmpPath.pushDirectory("mytempfolder");
@@ -49,24 +70,29 @@ int main(int argc, char** argv)
     Poco::File tmpDir(tmpPath);
     tmpDir.createDirectories();
 
-    if (tmpDir.exists()) std::cout << "dir exists\n";
+    if (tmpDir.exists()) std::cout << "it exists\n";
     if (tmpDir.isFile()) std::cout << "is file\n";
     if (tmpDir.isDirectory()) std::cout << "is directory\n";
     if (tmpDir.canRead()) std::cout << "canRead\n";
     if (tmpDir.canWrite()) std::cout << "canWrite\n";
-#endif
 
-#if 0
-    tmp.keep();
+    //tmp.keep(); // tell file to persist, otherwise it self-deletes
     std::cout << tmp.path().c_str();
     std::cout << "\n----\n";
     std::ofstream ostr(tmp.path().c_str());
     ostr << "hello, world!" << std::endl;
     ostr.close();
+	//tmp.remove(); // can explicitely remove file
 #endif    
 
 #if 0
-    for (int i = 0;i < 10;i++) {
+    for (int i = 0;i < 3;i++) {
+		/*
+		prints out, but does not create it:
+			/tmp/tmp1449caaaaa
+			/tmp/tmp1449daaaaa
+			/tmp/tmp1449eaaaaa
+		*/
         std::cout << tmp.tempName() << std::endl;
     }
 #endif
@@ -77,7 +103,7 @@ int main(int argc, char** argv)
     std::cout << "[" << s << "]\n";
     Poco::File x(s);
     x.createDirectories();
-    //x.remove(true);
+    //x.remove(true); // remove folder recursively!
     g = s;
 
     //ff();
@@ -95,12 +121,12 @@ int main(int argc, char** argv)
 
     if (testFile.createFile()) {
         std::cout << "\ncreated\n";
+		//testFile.remove(); // can explicitely delete file too, otherwise it persist
     } else {
+		// goes here if file already exists
         std::cout << "\nNOT created\n";
     }
 #endif
-
-    std::cout << addnum(3,4);
 
 	return 0;
 }
