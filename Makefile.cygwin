@@ -1,20 +1,28 @@
 CC = g++
 GCC = gcc
 CFLAGS = -Wall -Werror 
+CFLAGS2 = -Werror 
 INC2 = -Imultiplexing/
 INC = -I/usr/include/Poco/Net/ \
 	      -I/usr/include/Poco/Foundation/ \
 		  -I/usr/include/Poco/JSON/
 LIB = -L/usr/lib/
 LINK = -lPocoFoundation -lPocoNet -lPocoJSON
+LINK2 = -lPocoFoundation -lPocoNet -lPocoJSON -lPocoNetSSL
 SRC = main.cpp ClientHandler.cpp
 SRC2 = testconn.cpp
 
-main: 
-	$(CC) $(CFLAGS) $(INC) -o main $(SRC) $(DEPS) $(LIB) $(LINK)
+main: $(SRC)
+	$(CC) $(CFLAGS) $(INC) -o main $(SRC) helper.cpp $(DEPS) $(LIB) $(LINK)
 
-testconn: 
+testconn: $(SRC2) 
 	$(CC) $(CFLAGS) $(INC) -o testconn $(SRC2) $(DEPS) $(LIB) $(LINK)
+
+httpsslcli: httpsslcli.cpp
+	$(CC) $(CFLAGS2) $(INC) -o httpsslcli httpsslcli.cpp $(DEPS) $(LIB) $(LINK2)
+
+tcpsslcli: tcpsslcli.cpp
+	$(CC) $(CFLAGS2) $(INC) -o tcpsslcli tcpsslcli.cpp $(DEPS) $(LIB) $(LINK2)
 
 client:
 	$(GCC) $(INC2) -o client multiplexing/client.c 
@@ -23,4 +31,4 @@ server:
 	$(GCC) $(INC2) -o server multiplexing/server.c 
 
 clean:
-	rm main main.o testconn client server
+	@rm -f main main.o testconn client server httpsslcli tcpsslcli
